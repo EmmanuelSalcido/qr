@@ -614,7 +614,6 @@ def descargar_qrn():
         abort(500)
 
 #################### Dashboard #################
-from datetime import date
 
 @app.route("/dashboard")
 @admin_o_supervisor
@@ -641,12 +640,22 @@ def dashboard():
     """)
     ultimos_ingresos = cursor.fetchall()
 
-    # Datos para gráfico: Choferes por estación (solo activos)
+    # Datos para gráfico: Choferes por última estación (solo activos)
     cursor.execute("""
-        SELECT estacion, COUNT(*) AS cantidad
-        FROM registros
-        WHERE activo = 1
-        GROUP BY estacion
+        SELECT ultima.estacion, COUNT(*) AS cantidad
+        FROM (
+            SELECT r.id,
+                   COALESCE(
+                       (SELECT s.estacion 
+                        FROM seguimiento s 
+                        WHERE s.registro_id = r.id 
+                        ORDER BY s.fecha DESC LIMIT 1),
+                       r.estacion
+                   ) AS estacion
+            FROM registros r
+            WHERE r.activo = 1
+        ) AS ultima
+        GROUP BY ultima.estacion
     """)
     resultados_estaciones = cursor.fetchall()
     labels_estaciones = [r["estacion"] for r in resultados_estaciones]
