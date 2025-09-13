@@ -1,0 +1,208 @@
+/* Fuente y fondo general */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor principal: formulario y lista */
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Formulario y lista ocupan cada uno la mitad */
+.form-container, .list-container {
+  flex: 1;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  background-color: #ffffff;
+  padding: 25px;
+}
+
+/* Encabezado */
+.registro-container h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 28px;
+  color: #007bff;
+  font-weight: 700;
+}
+
+/* Formularios: lista vertical con espacio */
+.form-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Labels con ícono */
+.form-container label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #444;
+}
+
+.form-container label span {
+  margin-right: 6px;
+  font-size: 18px;
+}
+
+/* Inputs y textarea */
+.form-container input[type="text"],
+.form-container input[type="date"],
+.form-container input[type="file"],
+.form-container textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-container input:focus,
+.form-container textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Botones */
+.btn-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  padding: 12px 28px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.btn-back {
+  background-color: #6c757d;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: #545b62;
+}
+
+/* Lista de choferes */
+.list-container h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.chofer-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 10px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chofer-item {
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chofer-item small,
+.chofer-item strong {
+  display: block;
+}
+
+/* Imagen miniatura */
+.foto-list {
+  max-width: 80px;
+  max-height: 80px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.foto-list:hover {
+  transform: scale(1.1);
+}
+
+/* Modal para ver imagen en grande */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.modal-contenido {
+  margin: auto;
+  display: block;
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+}
+
+.cerrar {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Mensajes flash */
+.flash-messages {
+  margin: 10px 0;
+}
+
+.flash {
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.flash.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.flash.success {
+  background-color: #d4edda;
+  color: #155724;
+}

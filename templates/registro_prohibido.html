@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Choferes Prohibidos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/prohibido.css') }}">
+</head>
+<body>
+  <div class="registro-container">
+    <h1>🚫 Registro de Chofer Vetados</h1>
+
+    <div class="container">
+      <!-- FORMULARIO -->
+      <div class="form-container">
+        <form method="POST" action="{{ url_for('registro_prohibido') }}" enctype="multipart/form-data">
+          <label><span>👤</span> Nombre:</label>
+          <input type="text" name="nombre" required>
+
+          <label><span>🆔</span> CURP:</label>
+          <input type="text" name="curp" required maxlength="18">
+
+          <label><span>🎂</span> Fecha de Nacimiento:</label>
+          <input type="date" name="fecha_nacimiento" required>
+
+          <label><span>🏢</span> Empresa:</label>
+          <input type="text" name="empresa" required>
+
+          <label><span>📝</span> Observación:</label>
+          <textarea name="observacion" required></textarea>
+
+          <label><span>📸</span> Foto INE:</label>
+          <input type="file" name="foto_ine" accept=".jpg,.jpeg,.png">
+
+          <div class="btn-group">
+            <a href="/" class="btn-back">⬅️ Volver</a>
+            <button type="submit">Registrar 🚫</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- LISTADO -->
+      <div class="list-container">
+        <h2>📋 Choferes Vetados</h2>
+        <div class="chofer-list">
+          {% for c in choferes %}
+            <div class="chofer-item">
+              <strong>{{ c.nombre }}</strong> <br>
+              <small>Empresa: {{ c.empresa }}</small><br>
+              <small>Fecha de Nacimiento: {{ c.fecha_nacimiento }}</small><br>
+              <small>Observación: {{ c.observacion }}</small><br>
+
+              {% if c.ine_foto %}
+                <img src="{{ url_for('static', filename='uploads/' ~ c.ine_foto) }}"
+                     alt="Foto INE" class="foto-list" onclick="abrirModal(this)">
+              {% endif %}
+            </div>
+          {% else %}
+            <p>No hay choferes Vetados registrados.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PARA VER IMAGEN EN GRANDE -->
+  <div id="modalImagen" class="modal" onclick="cerrarModal()">
+    <span class="cerrar">&times;</span>
+    <img class="modal-contenido" id="imgModal">
+  </div>
+
+  <script>
+    function abrirModal(img) {
+      document.getElementById('modalImagen').style.display = "block";
+      document.getElementById('imgModal').src = img.src;
+    }
+    function cerrarModal() {
+      document.getElementById('modalImagen').style.display = "none";
+    }
+  </script>
+</body>
+</html>

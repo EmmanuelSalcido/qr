@@ -1,0 +1,119 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.login-container {
+    position: relative;
+    background: #fff;
+    padding: 35px 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    z-index: 1;
+    overflow: hidden;
+}
+
+/* Contenedor del borde multicolor */
+.login-container::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 15px;
+    background: conic-gradient(
+        red 0deg 45deg,
+        orange 45deg 90deg,
+        yellow 90deg 135deg,
+        green 135deg 180deg,
+        cyan 180deg 225deg,
+        blue 225deg 270deg,
+        indigo 270deg 315deg,
+        violet 315deg 360deg
+    );
+    z-index: -1;
+    animation: girar 6s linear infinite;
+}
+
+/* Fondo blanco interno */
+.login-container::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    background: #fff;
+    border-radius: 10px;
+    z-index: 0;
+}
+
+@keyframes girar {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+h2 {
+    margin-bottom: 25px;
+    color: #007BFF;
+    position: relative;
+    z-index: 1;
+}
+
+form label {
+    display: block;
+    text-align: left;
+    margin-bottom: 5px;
+    font-weight: 600;
+    position: relative;
+    z-index: 1;
+}
+
+form input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 18px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    position: relative;
+    z-index: 1;
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+form button:hover {
+    background-color: #0056b3;
+}
+
+.mensaje.error {
+    background-color: #ffe0e0;
+    color: #d8000c;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: left;
+    position: relative;
+    z-index: 1;
+}

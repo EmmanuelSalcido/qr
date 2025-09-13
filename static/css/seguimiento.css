@@ -1,0 +1,126 @@
+/* Estilos SOLO para la página de Seguimiento */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #eef1f6;
+  margin: 0;
+  padding: 0;
+}
+
+.seguimiento-container {
+  max-width: 800px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: #17a2b8;
+}
+
+.icon-label {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 10px 0 6px;
+  display: block;
+  color: #444;
+}
+
+.icon-label span {
+  margin-right: 6px;
+  font-size: 18px;
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+input:focus {
+  border-color: #17a2b8;
+  outline: none;
+}
+
+.btn-primary {
+  background-color: #17a2b8;
+  color: white;
+  font-weight: 600;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #117a8b;
+}
+
+.mensaje {
+  color: #28a745;
+  font-weight: 600;
+  margin: 15px 0;
+}
+
+.detalles ul {
+  list-style: none;
+  padding: 0;
+}
+
+.detalles li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.historial {
+  margin-top: 20px;
+}
+
+.historial table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.historial th, .historial td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.historial th {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.historial tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.btn-group {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.btn-back {
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn-back:hover {
+  background-color: #545b62;
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú Principal - Sistema QR Dinámico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1> <center>Sistema QR Dinámico</center></h1>
+    <div class="menu">
+        {% if session['rol'] in ['supervisor', 'admin' , 'Encargado'] %}
+            <a href="{{ url_for('registro') }}">📋 Registro</a>
+        {% endif %}
+        <a href="{{ url_for('seguimiento') }}">🚚 Seguimiento</a>
+        <a href="{{ url_for('activos') }}">📡 QR Activos</a>
+        {% if session['rol'] in ['supervisor', 'admin' , 'Encargado'] %}
+        <a href="{{ url_for('ver_qr') }}">🔍 Ver QR</a>
+         {% endif %}
+        {% if session['rol'] in ['supervisor', 'admin' , 'Encargado'] %}
+    <a href="{{ url_for('descargar_qrn') }}">📊 Descargar QR´s</a>
+{% endif %}
+{% if session['rol'] in ['admin' , 'supervisor' ] %}
+<a href="{{ url_for('dashboard') }}">Dashboard</a>
+{% endif %}
+
+        <a href="{{ url_for('logout') }}">Cerrar sesión</a>
+    </div>
+</body>
+</html>

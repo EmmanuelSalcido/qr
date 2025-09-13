@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Activos en Planta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/activos.css') }}">
+</head>
+<body>
+  <div class="activos-container">
+    <h1>🚛 Choferes actualmente dentro de planta</h1> 
+    <div class="btn-group">
+      <a href="/" class="btn-back">⬅️ Volver al menú</a>
+    </div>
+
+    {% for r in activos %}
+    <div class="card">
+      <h2>{{ r.chofer }} (QR {{ r.qr_id }})</h2>
+      <p class="info">📄 Folio: {{ r.folio }} | 🏢 Empresa: {{ r.empresa }}</p>
+      <p class="info">🕒 Ingresó en: {{ r.primera_estacion }} el {{ r.fecha_registro }}</p>
+      <p class="info">📍 Última estación: {{ r.ultima_estacion }} el {{ r.fecha_ultima }}</p>
+      <p class="info">⏳ Tiempo dentro: {{ r.duracion }}</p>
+
+      {% if session['rol'] in ['admin', 'supervisor' , 'Encargado'] %}
+      <form method="POST" action="{{ url_for('activos') }}" class="finalizar-form">
+        <input type="hidden" name="finalizar_id" value="{{ r.id }}">
+        <button type="submit" title="Finalizar registro">Finalizar</button>
+      </form>
+      {% endif %}
+
+      <h4>📚 Historial completo:</h4>
+      <ul class="historial">
+        {% for h in r.historial %}
+        <li>{{ h.estacion }} - {{ h.fecha }}</li>
+        {% else %}
+        <li>Sin seguimiento</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+
+    <div class="btn-group">
+      <a href="/" class="btn-back">⬅️ Volver al menú</a>
+    </div>
+  </div>
+</body>
+</html>

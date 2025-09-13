@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Seguimiento de QR</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/seguimiento.css') }}">
+  <script>
+    function buscarQR() {
+      const qr_id = document.getElementById("qr_id").value;
+      if (qr_id) {
+        window.location.href = `/seguimiento?qr_id=${qr_id}`;
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="seguimiento-container">
+    <h1>📍 Seguimiento de QR</h1>
+
+    <!-- Entrada de QR ID -->
+    <label class="icon-label"><span>🔢</span> ID de QR:</label>
+    <input type="text" name="qr_id" id="qr_id" 
+           value="{{ qr_id or '' }}" 
+           onchange="buscarQR()" 
+           required 
+           pattern="QRN[1-9]|QR1[0-9]|QR20" 
+           title="Ingrese un QR válido: QRN1 a QRN20">
+
+    {% if datos_qr %}
+    <form method="POST" action="/seguimiento" class="form-estacion">
+      <input type="hidden" name="qr_id" value="{{ qr_id }}">
+
+      {% if session['rol'] == 'admin' %}
+        <label for="estacion" class="icon-label"><span>🏭</span> Seleccione Estación:</label>
+        <select name="estacion" id="estacion" required>
+          <option value="Caseta">Caseta</option>
+          <option value="Patio">Patio</option>
+          <option value="Bascula">Báscula</option>
+        </select>
+        <br><br>
+      {% else %}
+        <label class="icon-label"><span>🏭</span> Estación actual:</label>
+      {% endif %}
+
+      <button type="submit" class="btn-primary">Registrar Estación</button>
+    </form>
+    {% endif %}
+
+    {% if mensaje %}
+      <p class="mensaje">{{ mensaje }}</p>
+    {% endif %}
+
+    {% if datos_qr %}
+      <div class="detalles">
+        <h3>🔍 Detalles del QR</h3>
+        <ul>
+          <li><strong>Folio:</strong> {{ datos_qr.folio }}</li>
+          <li><strong>Chofer:</strong> {{ datos_qr.chofer }}</li>
+          <li><strong>Empresa:</strong> {{ datos_qr.empresa }}</li>
+          <li><strong>Fecha de registro:</strong> {{ datos_qr.fecha }}</li>
+          <li><strong>Estación inicial:</strong> {{ datos_qr.estacion }}</li>
+        </ul>
+      </div>
+
+      <div class="historial">
+        <h4>🕓 Historial de estaciones</h4>
+        {% if historial %}
+        <table>
+          <thead>
+            <tr>
+              <th>Estación</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for h in historial %}
+            <tr>
+              <td>{{ h.estacion }}</td>
+              <td>{{ h.fecha }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+          <p>No hay historial aún.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="btn-group">
+      <a href="/" class="btn-back">⬅️ Volver al Menú</a>
+    </div>
+  </div>
+</body>
+</html>

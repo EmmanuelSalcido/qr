@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Chofer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+</head>
+<body>
+  <div class="registro-container">
+    <h1>📝 Registro de Chofer</h1>
+    <form method="POST" action="/registro" id="registroForm">
+      <!-- Campo QR con validación en tiempo real -->
+      <label class="icon-label"><span>🔢</span> ID de QR:</label>
+      <input type="text" name="qr_id" id="qr_id" required 
+             pattern="QRN([1-9]|1[0-9]|20)"
+             title="Ingrese un QR válido: QRN1 a QRN20" 
+             oninput="verificarQR()">
+      <p id="qr_error" style="color:red;"></p>
+
+      <label class="icon-label"><span>📄</span> Folio:</label>
+      <input type="text" name="folio" required>
+
+      <label class="icon-label"><span>👤</span> Nombre del Chofer:</label>
+      <input type="text" name="chofer" id="chofer" required>
+      <p id="chofer_error" style="color:red;"></p>
+
+      <!-- Botón Choferes Vetados corregido al endpoint real -->
+      <a href="{{ url_for('registro_prohibido') }}" class="btn-back" 
+         style="float: right; padding: 5px 10px; font-size: 12px;">🚫 Choferes Vetados</a>
+
+      <label class="icon-label"><span>🪪</span> Licencia:</label>
+      <input type="text" name="licencia" required>
+
+      <label class="icon-label"><span>🏢</span> Empresa:</label>
+      <input type="text" name="empresa" required>
+
+      <label class="icon-label"><span>🚚</span> Tipo de Carga:</label>
+      <input type="text" name="tipo_carga" required>
+
+      {% if session['rol'] == 'admin' %}
+        <label class="icon-label"><span>🏭</span> Estación:</label>
+        <select name="estacion" required>
+          <option value="Caseta">Caseta</option>
+          <option value="Patio">Patio</option>
+          <option value="Bascula">Báscula</option>
+        </select>
+      {% endif %}
+
+      <div class="btn-group">
+        <a href="/" class="btn-back">⬅️ Volver</a>
+        <button type="submit" id="btnRegistrar">Registrar ✅</button>
+      </div>
+
+    </form>
+  </div>
+
+  <script>
+    const btnRegistrar = document.getElementById("btnRegistrar");
+    let qrValido = false;
+    let choferValido = false;
+
+    // Validar QR
+    async function verificarQR() {
+      const qrInput = document.getElementById("qr_id");
+      const qrError = document.getElementById("qr_error");
+      const qrValue = qrInput.value.trim().toUpperCase();
+
+      if (!qrValue) {
+        qrError.textContent = "";
+        qrValido = true;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/check_qr?qr_id=${qrValue}`);
+        const data = await response.json();
+        if (data.activo) {
+          qrError.textContent = data.mensaje;
+          btnRegistrar.disabled = true;
+          qrValido = false;
+        } else {
+          qrError.textContent = "";
+          qrValido = true;
+          btnRegistrar.disabled = !choferValido;
+        }
+      } catch (err) {
+        console.error(err);
+        qrError.textContent = "Error al verificar QR";
+        qrValido = false;
+        btnRegistrar.disabled = true;
+      }
+    }
+
+    // Validar chofer prohibido
+    const choferInput = document.getElementById("chofer");
+    const choferError = document.getElementById("chofer_error");
+
+    async function verificarChofer() {
+      const nombre = choferInput.value.trim();
+      if (!nombre) {
+        choferError.textContent = "";
+        choferValido = true;
+        btnRegistrar.disabled = !qrValido;
+        return;
+      }
+
+      try {
+        const response = await fetch(`/check_chofer?nombre=${encodeURIComponent(nombre)}`);
+        const data = await response.json();
+
+        if (data.prohibido) {
+          choferError.textContent = "⛔ Este chofer está Vetado";
+          choferValido = false;
+          btnRegistrar.disabled = true;
+        } else {
+          choferError.textContent = "";
+          choferValido = true;
+          btnRegistrar.disabled = !qrValido;
+        }
+      } catch (err) {
+        console.error(err);
+        choferError.textContent = "Error al verificar chofer";
+        choferValido = false;
+        btnRegistrar.disabled = true;
+      }
+    }
+
+    choferInput.addEventListener("input", verificarChofer);
+
+    // Validación final antes de enviar
+    document.getElementById("registroForm").addEventListener("submit", function(e){
+      if (!qrValido || !choferValido) {
+        e.preventDefault();
+        alert("No se puede registrar: QR inválido o chofer prohibido.");
+      }
+    });
+  </script>
+</body>
+</html>

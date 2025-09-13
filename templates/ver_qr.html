@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ver QR</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/ver_qr.css') }}">
+</head>
+<body>
+  <div class="btn-group">
+      <a href="/" class="btn-back">⬅️ Volver al Menú</a>
+  </div>
+
+  <div class="verqr-container">
+    <h1>🔍 Buscar QR</h1>
+
+    <form method="post" class="filtro-form">
+      <input type="text" name="filtro" placeholder="Buscar..." value="{{ filtro_valor or '' }}">
+
+      <label>Desde:</label>
+      <input type="datetime-local" name="fecha_inicio" value="{{ fecha_inicio or '' }}">
+      
+      <label>Hasta:</label>
+      <input type="datetime-local" name="fecha_fin" value="{{ fecha_fin or '' }}">
+
+      <button type="submit">Filtrar 🔎</button>
+    </form>
+
+    <div class="tabla-container">
+      <table>
+        <thead>
+          <tr>
+            <th>QR</th>
+            <th>Folio</th>
+            <th>Chofer</th>
+            <th>Empresa</th>
+            <th>Estación Inicial</th>
+            <th>Fecha Registro</th>
+            <th>Tiempo dentro</th>
+            <th>Historial Completo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in resultados %}
+          <tr>
+            <td>
+              {{ row.qr_id }}
+              <br>
+              <!-- Exportar PDF por REGISTRO -->
+              <a href="{{ url_for('ver_qr', exportar_pdf_id=row.registro_id) }}" class="btn-pdf">📄 Exportar PDF</a>
+            </td>
+            <td>{{ row.folio }}</td>
+            <td>{{ row.chofer }}</td>
+            <td>{{ row.empresa }}</td>
+            <td>{{ row.estacion }}</td>
+            <td>{{ row.fecha }}</td>
+            <td>{{ row.tiempo_dentro or 'N/A' }}</td>
+            <td>
+              <table class="historial-table">
+                <thead>
+                  <tr>
+                    <th>Estación</th>
+                    <th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for est in historial.get(row.registro_id, []) %}
+                  <tr>
+                    <td>{{ est.estacion }}</td>
+                    <td>{{ est.fecha }}</td>
+                  </tr>
+                  {% endfor %}
+                  {% if not historial.get(row.registro_id) %}
+                  <tr><td colspan="2">Sin historial</td></tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-group">
+      <a href="/" class="btn-back">⬅️ Volver al Menú</a>
+    </div>
+  </div>
+</body>
+</html>

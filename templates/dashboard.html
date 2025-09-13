@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Planta</title>
+  <!-- jQuery y DataTables -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <!-- Estilos -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .panel-superior {
+      display: flex;
+      justify-content: space-around;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    .panel-item {
+      text-align: center;
+      font-size: 1.2em;
+    }
+    .panel-item strong {
+      color: #007bff;
+    }
+    .graficos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .grafico {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .grafico h3 {
+      margin-top: 0;
+      color: #333;
+    }
+    .tablas {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    #tablaIngresos {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    #tablaIngresos th, #tablaIngresos td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    #tablaIngresos th {
+      background-color: #007bff;
+      color: #fff;
+    }
+    .btn-group {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-group button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    .btn-group button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Dashboard Planta</h1>
+
+  <!-- Panel superior -->
+  <div class="panel-superior">
+    <div class="panel-item">QR Activos: <strong>{{ total_qr_activos }}</strong></div>
+    <div class="panel-item">Choferes dentro: <strong>{{ total_choferes }}</strong></div>
+    <div class="panel-item">Choferes Vetados: <strong>{{ total_vetados }}</strong></div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="graficos">
+    <div class="grafico">
+      <h3>Choferes por Estación</h3>
+      <canvas id="chartEstaciones"></canvas>
+    </div>
+    <div class="grafico">
+      <h3>% Choferes por Empresa</h3>
+      <canvas id="chartEmpresas"></canvas>
+    </div>
+  </div>
+
+  <!-- Tablas -->
+  <div class="tablas">
+    <h3>Últimos Ingresos</h3>
+    <table id="tablaIngresos">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>QR</th>
+          <th>Empresa</th>
+          <th>Estación</th>
+          <th>Hora Ingreso</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in ultimos_ingresos %}
+        <tr>
+          <td>{{ r.chofer }}</td>
+          <td>{{ r.qr_id }}</td>
+          <td>{{ r.empresa }}</td>
+          <td>{{ r.estacion }}</td>
+          <td>{{ r.fecha }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Botones de navegación -->
+  <div class="btn-group">
+    <form method="GET" action="{{ url_for('logout') }}">
+      <button type="submit">Cerrar sesión</button>
+    </form>
+    <form method="GET" action="{{ url_for('menu') }}">
+      <button type="submit">Menú Principal</button>
+    </form>
+    <form method="GET" action="{{ url_for('admin') }}">
+    {% if session['rol'] == 'admin' %}
+  <button type="submit">Administrador</button>
+  {% endif %}
+    </form>
+  </div>
+
+  <script>
+    // Inicializar DataTables
+    $(document).ready(function() {
+      $('#tablaIngresos').DataTable({
+        pageLength: 10,
+        language: {
+          url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+        }
+      });
+    });
+
+    // Datos para los gráficos desde Flask
+    const dashboardData = {
+      labelsEstaciones: {{ labels_estaciones | tojson }},
+      dataEstaciones: {{ data_estaciones | tojson }},
+      labelsEmpresas: {{ labels_empresas | tojson }},
+      dataEmpresas: {{ data_empresas | tojson }}
+    };
+
+    // Gráfico: Choferes por estación
+    const ctxEst = document.getElementById('chartEstaciones').getContext('2d');
+    new Chart(ctxEst, {
+      type: 'bar',
+      data: {
+        labels: dashboardData.labelsEstaciones,
+        datasets: [{
+          label: 'Choferes por Estación',
+          data: dashboardData.dataEstaciones,
+          backgroundColor: '#007bff',
+          borderColor: '#0056b3',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: 'Cantidad de Choferes' } },
+          x: { title: { display: true, text: 'Estaciones' } }
+        }
+      }
+    });
+
+    // Gráfico: % Choferes por empresa
+    const ctxEmp = document.getElementById('chartEmpresas').getContext('2d');
+    new Chart(ctxEmp, {
+      type: 'pie',
+      data: {
+        labels: dashboardData.labelsEmpresas,
+        datasets: [{
+          label: 'Porcentaje Choferes por Empresa',
+          data: dashboardData.dataEmpresas,
+          backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6c757d'],
+          borderColor: '#fff',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } }
+      }
+    });
+
+    // Recarga automática cada 5 segundos
+    setInterval(function() {
+      location.reload();
+    }, 5000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <h1>👤 Panel de Administrador</h1>
+
+    {% if mensaje %}
+        <div class="mensaje">{{ mensaje }}</div>
+    {% endif %}
+
+    <div class="admin-container">
+        <div class="admin-forms">
+            <!-- Formulario para crear usuarios -->
+            <h2>➕ Crear nuevo usuario</h2>
+            <form method="POST" action="{{ url_for('admin') }}">
+                <label for="usuario">Usuario:</label>
+                <input type="text" id="usuario" name="usuario" required>
+
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+
+                <label for="rol">Rol:</label>
+                <select id="rol" name="rol" required>
+                    <option value="normal">Normal</option>
+                    <option value="admin">Administrador</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="Encargado">Encargado</option>
+                </select>
+
+                <label for="estacion">Estación (opcional):</label>
+                <input type="text" id="estacion" name="estacion">
+
+                <button type="submit" name="accion" value="crear">Crear usuario</button>
+            </form>
+
+            <!-- Formulario para restablecer contraseña -->
+            <h2>🔑 Restablecer contraseña</h2>
+            <form method="POST" action="{{ url_for('admin') }}">
+                <label for="usuario_reset">Usuario:</label>
+                <input type="text" id="usuario_reset" name="usuario_reset" required>
+
+                <label for="nueva_contrasena">Nueva contraseña:</label>
+                <input type="password" id="nueva_contrasena" name="nueva_contrasena" required>
+
+                <button type="submit" name="accion" value="reset">Restablecer contraseña</button>
+            </form>
+
+            <hr>
+
+            <!-- Botones de navegación -->
+            <form method="GET" action="{{ url_for('logout') }}">
+                <button type="submit">Cerrar sesión</button>
+            </form>
+            <form method="GET" action="{{ url_for('menu') }}">
+                <button type="submit">Menú Principal</button>
+            </form>
+             <form method="GET" action="{{ url_for('dashboard') }}">
+                <button type="submit">Dashboard</button>
+            </form>
+        </div>
+
+        <div class="admin-users">
+            <h2>📝 Usuarios registrados</h2>
+            <table>
+    <thead>
+        <tr>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Estación asignada</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in usuarios %}
+        <tr>
+            <td>{{ u.username }}</td>
+            <td>{{ u.rol }}</td>
+            <td>{{ u.estacion_asignada or 'N/A' }}</td>
+            <td>
+                <!-- Botón para eliminar usuario -->
+                <form method="POST" action="{{ url_for('admin') }}" style="display:inline;">
+                    <input type="hidden" name="usuario_eliminar" value="{{ u.username }}">
+                    <button type="submit" name="accion" value="eliminar" onclick="return confirm('¿Eliminar usuario {{ u.username }}?')">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+        </div>
+    </div>
+</body>
+</html>
